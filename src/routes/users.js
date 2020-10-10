@@ -1,11 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const UserService = require('../services/users');
-
-/* GET users listing. */
-// router.get('/', function(req, res, next) {
-//   res.send('respond with a resource');
-// });
+const models = require('../models');
 
 router.options('*', function(req, res) {
 	res.send(200);
@@ -17,20 +12,34 @@ router.get('/id', (req, res) => {
 })
 
 router.get('/user', (req, res) => {
-	const {id} = req.params;
-	var user = UserService.getUserById();
-  res.send(user)
+	const id = req.query.id;
+
+	models.User.findByPk(id)
+    .then(data => {
+      res.send(data.toJSON());
+    })
+    .catch(err => {
+      res.status(500).send({
+        message: "Error retrieving user with id=" + id
+      });
+    });
 })
 
 router.post('/user', (req, res) => {
-	const {id, email, name} = req.params;
-	UserService.createUser(
-		req.body.id,
-		req.body.firstName,
-		req.body.lastName,
-		req.body.email
-	);
-  res.sendStatus(200)
+	models.User.create({
+		id: req.body["id"],
+		firstName: req.body["firstName"],
+		lastName: req.body["lastName"],
+		email: req.body["email"]
+	})
+		.then(
+			res.sendStatus(200)
+		)
+		.catch(err => {
+			res.status(500).send({
+				message: "Error retrieving user with id=" + id
+			});
+		});
 })
 
 module.exports = router;
