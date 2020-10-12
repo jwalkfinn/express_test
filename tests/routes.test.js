@@ -64,7 +64,7 @@ describe('post User endpoint', () => {
     var data = {
       id: uniqid(),
       firstName: "Testor",
-      lastName: "Testinton",
+      lastName: "Testington",
       email: uniqid().concat("@email.com")
     }
     const res = await request(app)

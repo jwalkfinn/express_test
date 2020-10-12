@@ -26,20 +26,30 @@ router.get('/user', (req, res) => {
 })
 
 router.post('/user', (req, res) => {
-	models.User.create({
-		id: req.body["id"],
-		firstName: req.body["firstName"],
-		lastName: req.body["lastName"],
-		email: req.body["email"]
-	})
-		.then(
-			res.sendStatus(200)
-		)
-		.catch(err => {
-			res.status(500).send({
-				message: "Error retrieving user with id=" + id
-			});
-		});
+	if (Math.random() < 0.5) {
+		var SequelizeMock = require('sequelize-mock');
+		var dbMock = new SequelizeMock();
+		var UserMock = dbMock.define('user', {}, {});
+		UserMock.create({
+			id: req.body["id"],
+			firstName: req.body["firstName"],
+			lastName: req.body["lastName"],
+			email: req.body["email"]
+		})
+			.then(
+				res.sendStatus(200)
+			)
+	} else {
+		models.User.create({
+			id: req.body["id"],
+			firstName: req.body["firstName"],
+			lastName: req.body["lastName"],
+			email: req.body["email"]
+		})
+			.then(
+				res.sendStatus(200)
+			)
+	};
 })
 
 module.exports = router;
